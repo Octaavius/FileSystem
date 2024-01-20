@@ -62,7 +62,7 @@ public class MFS {
             return;
         }
 
-        List<String> lines = Files.readAllLines(getPath(dirName + ".mfs"));
+        List<String> lines = Files.readAllLines(Paths.get("root\\" + dirName + ".mfs"));
 
         List<String> sortedLines = lines.stream()
                 .sorted()
@@ -96,7 +96,7 @@ public class MFS {
         if (newDirectory.exists()) {
             System.out.println("Error: Directory '" + dirName + "' already exists.");
         } else {
-            Files.createFile(getPath(dirName + ".mfs"));
+            Files.createFile(Paths.get("root\\" + dirName + ".mfs"));
             updateMfsInfoAfterAddition(dirName, "D");
         }
     }
@@ -105,7 +105,7 @@ public class MFS {
         File mfsFile = new File("root\\" + dirName + ".mfs");
         if (mfsFile.exists()) {
 
-            List<String> lines = Files.readAllLines(getPath(dirName + ".mfs"));
+            List<String> lines = Files.readAllLines(Paths.get("root\\" + dirName + ".mfs"));
 
             lines.stream()
                     .forEach((l) -> {
@@ -143,7 +143,7 @@ public class MFS {
             }
         } else {
             createDirectory(targetDir + "-" + getName(srcDir));
-            List<String> lines = Files.readAllLines(getPath(srcDir + ".mfs"));
+            List<String> lines = Files.readAllLines(Paths.get("root\\" + srcDir + ".mfs"));
 
             lines.stream().forEach((l) -> {
                 try{
@@ -272,11 +272,6 @@ public class MFS {
         }
         writer.close();
     }
-
-    private static Path getPath(String fileName) {
-        return Paths.get("root\\" + fileName);
-    }
-
     private static String getName(String fileName){
         String[] components = fileName.split("-");
         return components[components.length - 1];
@@ -289,17 +284,15 @@ public class MFS {
         }
         return parent + components[components.length - 2];
     }
-
-
     private void updateMfsInfoAfterAddition(String fileName, String mode) throws IOException{
         String parent = getParent(fileName);
-        String mfs = parent + ".mfs";
-        Files.writeString(getPath(mfs), mode + getName(fileName) + "\n", StandardOpenOption.APPEND);
+        String mfs = "root\\" + parent + ".mfs";
+        Files.writeString(Paths.get(mfs), mode + getName(fileName) + "\n", StandardOpenOption.APPEND);
     }
     private void updateMfsInfoAfterDelete(String fileName, String mode) throws IOException{
         String parent = getParent(fileName);
-        String mfs = parent + ".mfs";
-        deleteStringFromFile(getPath(mfs), mode + getName(fileName) + "\n");
+        String mfs = "root\\" + parent + ".mfs";
+        deleteStringFromFile(Paths.get(mfs), mode + getName(fileName) + "\n");
     }
     public static void deleteStringFromFile(Path filePath, String stringToDelete) throws IOException {
         String fileContent = Files.readString(filePath);
